@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "mixin": [
+    "dailyshop-common.mixins.json",
+    "dailyshop-quilt.mixins.json"
+  ],
+  "quilt_loader": {
+    "group": "bigchadguys",
+    "id": "dailyshop",
+    "version": "1.0.0",
+    "metadata": {
+      "name": "Daily Shop",
+      "description": "",
+      "contributors": {
+        "KaptainWutax": "Author"
+      },
+      "contact": {
+        "sources": "https://github.com/bigchadguys/DailyShop/"
+      },
+      "icon": "assets/dailyshop/icon.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        "bigchadguys.dailyshop.quilt.DailyShopQuiltMod"
+      ]
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": "*"
+      },
+      {
+        "id": "quilt_base",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": ">=1.20.1"
+      }
+    ]
+  },
+  "minecraft": {
+    "environment": "*"
+  }
+}

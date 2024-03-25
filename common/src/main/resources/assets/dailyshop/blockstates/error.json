@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "dailyshop:block/error"
+    }
+  }
+}

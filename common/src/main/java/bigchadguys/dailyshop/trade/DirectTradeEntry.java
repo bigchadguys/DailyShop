@@ -1,0 +1,166 @@
+package bigchadguys.dailyshop.trade;
+
+import bigchadguys.dailyshop.data.adapter.Adapters;
+import bigchadguys.dailyshop.data.item.ItemPredicate;
+import bigchadguys.dailyshop.data.serializable.IJsonSerializable;
+import bigchadguys.dailyshop.init.ModBlocks;
+import bigchadguys.dailyshop.init.ModItems;
+import bigchadguys.dailyshop.util.WeightedList;
+import bigchadguys.dailyshop.world.random.RandomSource;
+import bigchadguys.dailyshop.world.roll.IntRoll;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+
+import java.util.Optional;
+import java.util.stream.Stream;
+
+public class DirectTradeEntry extends TradeEntry {
+
+    private final WeightedList<Input> input1;
+    private final WeightedList<Input> input2;
+    private final WeightedList<Input> input3;
+    private final WeightedList<Output> output;
+    private IntRoll trades;
+
+    public DirectTradeEntry() {
+        this.input1 = new WeightedList<>();
+        this.input2 = new WeightedList<>();
+        this.input3 = new WeightedList<>();
+        this.output = new WeightedList<>();
+    }
+
+    public DirectTradeEntry(IntRoll trades) {
+        this();
+        this.trades = trades;
+    }
+
+    public DirectTradeEntry addInput(int index, ItemPredicate filter, IntRoll count, double weight) {
+        WeightedList<Input> input = switch(index) {
+            case 1 -> this.input1;
+            case 2 -> this.input2;
+            case 3 -> this.input3;
+            default -> throw new UnsupportedOperationException();
+        };
+
+        input.add(new Input(filter, count), weight);
+        return this;
+    }
+
+    public DirectTradeEntry addOutput(Item item, NbtCompound nbt, IntRoll count, double weight) {
+        this.output.add(new Output(item, nbt, count), weight);
+        return this;
+    }
+
+    @Override
+    public Stream<Trade> generate(RandomSource random) {
+        Input input1 = this.input1.getRandom(random).orElse(Input.AIR);
+        Input input2 = this.input2.getRandom(random).orElse(Input.AIR);
+        Input input3 = this.input3.getRandom(random).orElse(Input.AIR);
+        Output output = this.output.getRandom(random).orElseGet(() -> new Output(ModBlocks.ERROR.get().asItem(), null, IntRoll.ofConstant(1)));
+
+        return Stream.of(new Trade(input1.generate(random), input2.generate(random), input3.generate(random),
+                output.generate(random), 0, this.trades == null ? -1 : this.trades.get(random)));
+    }
+
+    @Override
+    public Optional<JsonElement> writeJson() {
+        JsonObject json = new JsonObject();
+        this.input1.writeJson(Input::writeJson).ifPresent(value -> json.add("input1", value));
+        this.input2.writeJson(Input::writeJson).ifPresent(value -> json.add("input2", value));
+        this.input3.writeJson(Input::writeJson).ifPresent(value -> json.add("input3", value));
+        this.output.writeJson(Output::writeJson).ifPresent(value -> json.add("output", value));
+        Adapters.INT_ROLL.writeJson(this.trades).ifPresent(value -> json.add("trades", value));
+        return Optional.of(json);
+    }
+
+    @Override
+    public void readJson(JsonElement json) {
+        if(json instanceof JsonObject object) {
+            this.input1.readJson(object.get("input1"), Input::new, Input::readJson);
+            this.input2.readJson(object.get("input2"), Input::new, Input::readJson);
+            this.input3.readJson(object.get("input3"), Input::new, Input::readJson);
+            this.output.readJson(object.get("output"), Output::new, Output::readJson);
+            this.trades = Adapters.INT_ROLL.readJson(object.get("trades")).orElse(null);
+        }
+    }
+
+    public static class Input implements IJsonSerializable<JsonObject> {
+        public static final Input AIR = new Input(ItemPredicate.TRUE, IntRoll.ofConstant(0));
+
+        private ItemPredicate filter;
+        private IntRoll count;
+
+        public Input() {
+
+        }
+
+        public Input(ItemPredicate filter, IntRoll count) {
+            this.filter = filter;
+            this.count = count;
+        }
+
+        public Trade.Input generate(RandomSource random) {
+            return new Trade.Input(this.filter, this.count.get(random));
+        }
+
+        @Override
+        public Optional<JsonObject> writeJson() {
+            JsonObject json = new JsonObject();
+            Adapters.ITEM_PREDICATE.writeJson(this.filter).ifPresent(value -> json.add("filter", value));
+            Adapters.INT_ROLL.writeJson(this.count).ifPresent(value -> json.add("count", value));
+            return Optional.of(json);
+        }
+
+        @Override
+        public void readJson(JsonObject json) {
+            this.filter = Adapters.ITEM_PREDICATE.readJson(json.get("filter")).orElse(null);
+            this.count = Adapters.INT_ROLL.readJson(json.get("count")).orElse(null);
+        }
+    }
+
+    public static class Output implements IJsonSerializable<JsonObject> {
+        private Item item;
+        private NbtCompound nbt;
+        private IntRoll count;
+
+        public Output() {
+
+        }
+
+        public Output(Item item, NbtCompound nbt, IntRoll count) {
+            this.item = item;
+            this.nbt = nbt;
+            this.count = count;
+        }
+
+        public ItemStack generate(RandomSource random) {
+            ItemStack stack = new ItemStack(this.item, this.count.get(random));
+
+            if(this.nbt != null) {
+                stack.setNbt(this.nbt.copy());
+            }
+
+            return stack;
+        }
+
+        @Override
+        public Optional<JsonObject> writeJson() {
+            JsonObject json = new JsonObject();
+            Adapters.ITEM.writeJson(this.item).ifPresent(value -> json.add("item", value));
+            Adapters.COMPOUND_NBT.writeJson(this.nbt).ifPresent(value -> json.add("nbt", value));
+            Adapters.INT_ROLL.writeJson(this.count).ifPresent(value -> json.add("count", value));
+            return Optional.of(json);
+        }
+
+        @Override
+        public void readJson(JsonObject json) {
+            this.item = Adapters.ITEM.readJson(json.get("item")).orElse(null);
+            this.nbt = Adapters.COMPOUND_NBT.readJson(json.get("nbt")).orElse(null);
+            this.count = Adapters.INT_ROLL.readJson(json.get("count")).orElse(null);
+        }
+    }
+
+}

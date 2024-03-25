@@ -1,0 +1,26 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/bigchadguys/DailyShop/issues"
+license = "GNU General Public License v3.0"
+
+[[mods]]
+modId = "dailyshop"
+version = "1.0.0"
+displayName = "Daily Shop"
+authors = "KaptainWutax"
+description = ''''''
+logoFile = "assets/dailyshop/icon.png"
+
+[[dependencies.dailyshop]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.dailyshop]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
