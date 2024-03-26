@@ -62,7 +62,7 @@ public class Trade implements ISerializable<NbtCompound, JsonObject> {
     }
 
     public boolean isAvailable() {
-        return this.maximumTrades >= 0 && this.currentTrades < this.maximumTrades;
+        return this.maximumTrades < 0 || this.currentTrades < this.maximumTrades;
     }
 
     public void onTrade(int count) {
@@ -171,7 +171,8 @@ public class Trade implements ISerializable<NbtCompound, JsonObject> {
                    }
                 }
             } else if(filter instanceof PartialStack stack) {
-                stack.generate(1).ifPresent(_stack -> entries.add(new Entry(_stack.getItem(), _stack.getNbt())));
+                ItemStack _stack = stack.generate(this.count).orElseGet(() -> new ItemStack(ModBlocks.ERROR.get().asItem(), this.count));
+                entries.add(new Entry(_stack.getItem(), _stack.getNbt()));
             }
         }
 

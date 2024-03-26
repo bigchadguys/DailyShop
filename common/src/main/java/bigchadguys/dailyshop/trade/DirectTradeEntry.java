@@ -12,6 +12,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -50,6 +52,11 @@ public class DirectTradeEntry extends TradeEntry {
 
     public DirectTradeEntry addOutput(Item item, NbtCompound nbt, IntRoll count, double weight) {
         this.output.add(new Output(item, nbt, count), weight);
+        return this;
+    }
+
+    public DirectTradeEntry addOutput(String itemId, NbtCompound nbt, IntRoll count, double weight) {
+        this.output.add(new Output(new Identifier(itemId), nbt, count), weight);
         return this;
     }
 
@@ -121,7 +128,7 @@ public class DirectTradeEntry extends TradeEntry {
     }
 
     public static class Output implements IJsonSerializable<JsonObject> {
-        private Item item;
+        private Identifier item;
         private NbtCompound nbt;
         private IntRoll count;
 
@@ -130,13 +137,18 @@ public class DirectTradeEntry extends TradeEntry {
         }
 
         public Output(Item item, NbtCompound nbt, IntRoll count) {
+            this(Registries.ITEM.getId(item), nbt, count);
+        }
+
+        public Output(Identifier item, NbtCompound nbt, IntRoll count) {
             this.item = item;
             this.nbt = nbt;
             this.count = count;
         }
 
         public ItemStack generate(RandomSource random) {
-            ItemStack stack = new ItemStack(this.item, this.count.get(random));
+            Item item = Registries.ITEM.getOrEmpty(this.item).orElse(ModBlocks.ERROR.get().asItem());
+            ItemStack stack = new ItemStack(item, this.count.get(random));
 
             if(this.nbt != null) {
                 stack.setNbt(this.nbt.copy());
@@ -148,7 +160,7 @@ public class DirectTradeEntry extends TradeEntry {
         @Override
         public Optional<JsonObject> writeJson() {
             JsonObject json = new JsonObject();
-            Adapters.ITEM.writeJson(this.item).ifPresent(value -> json.add("item", value));
+            Adapters.IDENTIFIER.writeJson(this.item).ifPresent(value -> json.add("item", value));
             Adapters.COMPOUND_NBT.writeJson(this.nbt).ifPresent(value -> json.add("nbt", value));
             Adapters.INT_ROLL.writeJson(this.count).ifPresent(value -> json.add("count", value));
             return Optional.of(json);
@@ -156,7 +168,7 @@ public class DirectTradeEntry extends TradeEntry {
 
         @Override
         public void readJson(JsonObject json) {
-            this.item = Adapters.ITEM.readJson(json.get("item")).orElse(null);
+            this.item = Adapters.IDENTIFIER.readJson(json.get("item")).orElse(null);
             this.nbt = Adapters.COMPOUND_NBT.readJson(json.get("nbt")).orElse(null);
             this.count = Adapters.INT_ROLL.readJson(json.get("count")).orElse(null);
         }
