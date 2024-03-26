@@ -2,7 +2,6 @@ package bigchadguys.dailyshop.world.data;
 
 import bigchadguys.dailyshop.data.serializable.INbtSerializable;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 
 import java.io.File;

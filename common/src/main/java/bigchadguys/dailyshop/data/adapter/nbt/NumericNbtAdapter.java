@@ -6,7 +6,7 @@ import bigchadguys.dailyshop.data.bit.BitBuffer;
 import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.AbstractNbtNumber;
-import net.minecraft.nbt.NbtElement ;
+import net.minecraft.nbt.NbtElement;
 
 import java.io.DataInput;
 import java.io.DataOutput;

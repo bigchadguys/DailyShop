@@ -1,7 +1,6 @@
 package bigchadguys.dailyshop.init;
 
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 

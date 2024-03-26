@@ -38,6 +38,11 @@ public class DailyShopData extends WorldData {
         this.onChanged(server);
     }
 
+    public void reset() {
+        this.lastUpdated = 0;
+        this.setDirty(true);
+    }
+
     public void onTick(MinecraftServer server) {
         if(ModConfigs.DAILY_SHOP.shouldUpdate(this.lastUpdated)) {
             this.setShop(ModConfigs.DAILY_SHOP.generate(JavaRandom.ofNanoTime()), server);

@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;

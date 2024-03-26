@@ -1,7 +1,7 @@
 package bigchadguys.dailyshop.data.entity;
 
-import bigchadguys.dailyshop.init.ModConfigs;
 import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
+import bigchadguys.dailyshop.init.ModConfigs;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.Entity;

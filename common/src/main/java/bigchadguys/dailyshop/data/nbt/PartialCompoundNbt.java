@@ -2,10 +2,10 @@ package bigchadguys.dailyshop.data.nbt;
 
 import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.data.adapter.ISimpleAdapter;
+import bigchadguys.dailyshop.data.entity.EntityPlacement;
 import bigchadguys.dailyshop.data.item.ItemPlacement;
 import bigchadguys.dailyshop.data.item.PartialItem;
 import bigchadguys.dailyshop.data.tile.PartialBlockState;
-import bigchadguys.dailyshop.data.entity.EntityPlacement;
 import bigchadguys.dailyshop.data.tile.TilePlacement;
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.StringReader;

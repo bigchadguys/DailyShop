@@ -2,8 +2,6 @@ package bigchadguys.dailyshop.trade;
 
 import bigchadguys.dailyshop.data.adapter.basic.TypeSupplierAdapter;
 import bigchadguys.dailyshop.data.bit.BitBuffer;
-import bigchadguys.dailyshop.data.serializable.IBitSerializable;
-import bigchadguys.dailyshop.data.serializable.INbtSerializable;
 import bigchadguys.dailyshop.data.serializable.ISerializable;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.NbtCompound;

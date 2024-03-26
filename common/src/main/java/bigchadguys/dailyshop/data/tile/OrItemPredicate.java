@@ -1,7 +1,7 @@
 package bigchadguys.dailyshop.data.tile;
 
-import bigchadguys.dailyshop.data.item.PartialItem;
 import bigchadguys.dailyshop.data.item.ItemPredicate;
+import bigchadguys.dailyshop.data.item.PartialItem;
 import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
 
 import java.util.Arrays;

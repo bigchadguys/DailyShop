@@ -8,9 +8,13 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -28,6 +32,8 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+
+import java.util.List;
 
 public class DailyShopBlock extends BlockWithEntity implements InventoryProvider {
 
@@ -95,6 +101,35 @@ public class DailyShopBlock extends BlockWithEntity implements InventoryProvider
         }
 
         return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if(!world.isClient && world.getBlockEntity(pos) instanceof DailyShopBlockEntity shop) {
+            if(player.isCreative() && !shop.isEmpty()) {
+                ItemStack stack = new ItemStack(ModBlocks.DAILY_SHOP.get());
+                shop.setStackNbt(stack);
+
+                ItemEntity item = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
+                item.setToDefaultPickupDelay();
+                world.spawnEntity(item);
+            }
+        }
+
+        super.onBreak(world, pos, state, player);
+    }
+
+    @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        List<ItemStack> drops = super.getDroppedStacks(state, builder);
+
+        if(builder.getOptional(LootContextParameters.BLOCK_ENTITY) instanceof DailyShopBlockEntity shop) {
+            ItemStack stack = new ItemStack(ModBlocks.DAILY_SHOP.get());
+            shop.setStackNbt(stack);
+            drops.add(stack);
+        }
+
+        return drops;
     }
 
     private static final VoxelShape[] SHAPES = {

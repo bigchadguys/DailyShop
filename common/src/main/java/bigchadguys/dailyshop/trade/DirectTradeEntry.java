@@ -4,7 +4,6 @@ import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.data.item.ItemPredicate;
 import bigchadguys.dailyshop.data.serializable.IJsonSerializable;
 import bigchadguys.dailyshop.init.ModBlocks;
-import bigchadguys.dailyshop.init.ModItems;
 import bigchadguys.dailyshop.util.WeightedList;
 import bigchadguys.dailyshop.world.random.RandomSource;
 import bigchadguys.dailyshop.world.roll.IntRoll;

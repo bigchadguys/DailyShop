@@ -3,7 +3,6 @@ package bigchadguys.dailyshop.data.serializable;
 import bigchadguys.dailyshop.data.bit.BitBuffer;
 import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NbtElement;
 
 import java.io.DataInput;

@@ -3,8 +3,6 @@ package bigchadguys.dailyshop.net;
 import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.bit.ArrayBitBuffer;
 import bigchadguys.dailyshop.data.serializable.IBitSerializable;
-import bigchadguys.dailyshop.data.serializable.IByteSerializable;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;

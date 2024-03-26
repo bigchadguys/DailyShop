@@ -1,11 +1,9 @@
 package bigchadguys.dailyshop.config;
 
 import bigchadguys.dailyshop.DailyShopMod;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.io.*;
-import java.lang.reflect.Type;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 
 public abstract class FileConfig extends Config {

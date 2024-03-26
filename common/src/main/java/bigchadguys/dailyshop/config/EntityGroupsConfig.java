@@ -1,8 +1,8 @@
 package bigchadguys.dailyshop.config;
 
 import bigchadguys.dailyshop.data.entity.EntityPredicate;
-import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
 import bigchadguys.dailyshop.data.entity.PartialEntity;
+import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
 import com.google.gson.annotations.Expose;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;

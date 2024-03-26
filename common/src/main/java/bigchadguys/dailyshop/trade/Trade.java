@@ -115,6 +115,8 @@ public class Trade implements ISerializable<NbtCompound, JsonObject> {
         private ItemPredicate filter;
         private int count;
 
+        private List<Entry> cache;
+
         public Input() {
 
         }
@@ -133,15 +135,17 @@ public class Trade implements ISerializable<NbtCompound, JsonObject> {
         }
 
         public ItemStack getDisplay(double time) {
-            List<Entry> entries = new ArrayList<>();
-            this.iterate(this.filter, new NbtCompound(), entries);
+            if(this.cache == null) {
+                this.cache = new ArrayList<>();
+                this.iterate(this.filter, new NbtCompound(), this.cache);
+            }
 
-            if(entries.isEmpty()) {
+            if(this.cache.isEmpty()) {
                 return new ItemStack(Items.AIR, this.count);
             }
 
-            int index = (int)(time / 30.0D) % entries.size();
-            return entries.get(index).toStack(this.count);
+            int index = (int)(time / 30.0D) % this.cache.size();
+            return this.cache.get(index).toStack(this.count);
         }
 
         private void iterate(ItemPredicate filter, NbtCompound nbt, List<Entry> entries) {
