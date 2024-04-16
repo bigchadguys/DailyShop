@@ -7,28 +7,16 @@ import bigchadguys.dailyshop.trade.TradeEntry;
 import bigchadguys.dailyshop.world.random.RandomSource;
 import com.google.gson.annotations.Expose;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.regex.Pattern;
-
 public class DailyShopConfig extends FileConfig {
 
-    @Expose private String updateTime;
+    @Expose private long startEpoch;
+    @Expose private long refreshDelay;
     @Expose private TradeEntry trades;
 
     public boolean shouldUpdate(long lastUpdated) {
-        String[] raw = this.updateTime.split(Pattern.quote(":"));
-
-        long expectedLastUpdate = LocalDateTime.now()
-                .withHour(Integer.parseInt(raw[0]))
-                .withMinute(Integer.parseInt(raw[1]))
-                .withSecond(Integer.parseInt(raw[2]))
-                .minusDays(1)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli();
-
-        return lastUpdated < expectedLastUpdate;
+        long refreshes = (lastUpdated - this.startEpoch) / this.refreshDelay;
+        long nextRefresh = this.startEpoch + (refreshes + 1) * this.refreshDelay;
+        return System.currentTimeMillis() >= nextRefresh;
     }
 
     public Shop generate(RandomSource random) {
@@ -42,7 +30,8 @@ public class DailyShopConfig extends FileConfig {
 
     @Override
     protected void reset() {
-        this.updateTime = "06:00:00";
+        this.startEpoch = 0;
+        this.refreshDelay = 60 * 1000;
         this.trades = new ReferenceTradeEntry("daily_shop");
     }
 

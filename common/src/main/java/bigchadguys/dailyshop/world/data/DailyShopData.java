@@ -1,5 +1,6 @@
 package bigchadguys.dailyshop.world.data;
 
+import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.init.ModConfigs;
 import bigchadguys.dailyshop.init.ModNetwork;
@@ -46,6 +47,7 @@ public class DailyShopData extends WorldData {
     public void onTick(MinecraftServer server) {
         if(ModConfigs.DAILY_SHOP.shouldUpdate(this.lastUpdated)) {
             this.setShop(ModConfigs.DAILY_SHOP.generate(JavaRandom.ofNanoTime()), server);
+            DailyShopMod.LOGGER.info("Refreshed daily shop!");
         }
     }
 

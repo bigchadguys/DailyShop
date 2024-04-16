@@ -309,18 +309,20 @@ public class DailyShopScreen extends HandledScreen<DailyShopScreenHandler> {
             int index = this.index + DailyShopScreen.this.scrollOffset;
 
             if(this.hovered && trades.size() > index) {
-                if(x < this.getX() + 20) {
-                    ItemStack itemStack = trades.get(index).getInput(1).getDisplay(time);
-                    //context.drawItemTooltip(DailyShopScreen.this.textRenderer, itemStack, x, y);
-                } else if(x < this.getX() + 50 && x > this.getX() + 30) {
-                    ItemStack itemStack = trades.get(index).getInput(2).getDisplay(time);
+                ItemStack stack = ItemStack.EMPTY;
 
-                    if(!itemStack.isEmpty()) {
-                        //context.drawItemTooltip(DailyShopScreen.this.textRenderer, itemStack, x, y);
-                    }
+                if(x >= this.getX() + 4 && x < this.getX() + 20) {
+                    stack = trades.get(index).getInput(1).getDisplay(time);
+                } else if(x >= this.getX() + 20 && x < this.getX() + 36) {
+                    stack = trades.get(index).getInput(2).getDisplay(time);
+                } else if(x >= this.getX() + 36 && x < this.getX() + 52) {
+                    stack = trades.get(index).getInput(3).getDisplay(time);
                 } else if(x > this.getX() + 65) {
-                    ItemStack itemStack = trades.get(index).getOutput();
-                    //context.drawItemTooltip(DailyShopScreen.this.textRenderer, itemStack, x, y);
+                    stack = trades.get(index).getOutput();
+                }
+
+                if(!stack.isEmpty()) {
+                    context.drawItemTooltip(DailyShopScreen.this.textRenderer, stack, x, y);
                 }
             }
         }
