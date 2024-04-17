@@ -16,4 +16,8 @@ public class ClientScheduler {
         return TICK;
     }
 
+    public static double getTick(double delta) {
+        return TICK + delta;
+    }
+
 }

@@ -32,6 +32,10 @@ public class DailyShopData extends WorldData {
         return this.shop;
     }
 
+    public long getLastUpdated() {
+        return this.lastUpdated;
+    }
+
     public void setShop(Shop shop, MinecraftServer server) {
         this.shop = shop;
         this.shop.setChangeListener(this, () -> this.onChanged(server));

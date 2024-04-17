@@ -5,6 +5,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +30,8 @@ public class MixinClientPlayNetworkHandler {
         BlockEntity entity = world.getBlockEntity(packet.getPos(), packet.getBlockEntityType()).orElse(null);
 
         if(entity instanceof BaseBlockEntity baseEntity) {
-            baseEntity.readNbt(packet.getNbt(), BaseBlockEntity.UpdateType.UPDATE_PACKET);
+            NbtCompound nbt = packet.getNbt() != null ? packet.getNbt() : new NbtCompound();
+            baseEntity.readNbt(nbt, BaseBlockEntity.UpdateType.UPDATE_PACKET);
             ci.cancel();
         }
     }

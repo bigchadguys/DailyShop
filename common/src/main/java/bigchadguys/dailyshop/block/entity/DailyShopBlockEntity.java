@@ -4,6 +4,7 @@ import bigchadguys.dailyshop.init.ModBlocks;
 import bigchadguys.dailyshop.init.ModWorldData;
 import bigchadguys.dailyshop.screen.handler.DailyShopScreenHandler;
 import bigchadguys.dailyshop.trade.Shop;
+import bigchadguys.dailyshop.world.data.DailyShopData;
 import dev.architectury.registry.menu.ExtendedMenuProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +34,7 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
     public static final int[] AVAILABLE_SLOTS = IntStream.range(0, 27).toArray();
 
     private final DefaultedList<ItemStack> inventory;
+    private long lastUpdated;
     private boolean refreshed;
 
     public DailyShopBlockEntity(BlockPos pos, BlockState state) {
@@ -44,8 +47,33 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
         this.refreshed = false;
     }
 
-    public static void tick(World world, BlockPos blockPos, BlockState state, DailyShopBlockEntity entity) {
+    public long getLastUpdated() {
+        return this.lastUpdated;
+    }
 
+    public boolean isRefreshed() {
+        return this.refreshed;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+        this.sendUpdatesToClient();
+    }
+
+    private void setRefreshed(boolean refreshed) {
+        this.refreshed = refreshed;
+        this.sendUpdatesToClient();
+    }
+
+    public static void tick(World world, BlockPos pos, BlockState state, DailyShopBlockEntity entity) {
+        if(world instanceof ServerWorld) {
+            DailyShopData data = ModWorldData.DAILY_SHOP.getGlobal(world);
+
+            if(data.getLastUpdated() != entity.lastUpdated) {
+                entity.setLastUpdated(data.getLastUpdated());
+                entity.setRefreshed(true);
+            }
+        }
     }
 
     @Override
@@ -155,6 +183,11 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
     @Override
     public Text getDisplayName() {
         return Text.translatable("container.daily_shop");
+    }
+
+    @Override
+    public void onOpen(PlayerEntity player) {
+        this.setRefreshed(false);
     }
 
     @Override
