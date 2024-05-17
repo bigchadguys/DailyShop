@@ -24,8 +24,7 @@ public class DailyShopBlockEntityRenderer implements BlockEntityRenderer<DailySh
     public void render(DailyShopBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if(entity.isRefreshed()) {
             matrices.push();
-            matrices.translate(0.0F, -1.5F, 0.0F);
-            matrices.translate(0.5F, 2.0F + Math.sin(ClientScheduler.getTick(tickDelta) / 10.0F) / 20.0F, 0.5F);
+            matrices.translate(0.5F, 0.5F + Math.sin(ClientScheduler.getTick(tickDelta) / 10.0F) / 20.0F, 0.5F);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180.0F));
             matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)ClientScheduler.getTick(tickDelta)));
 
