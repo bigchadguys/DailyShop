@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["###", "O O", "AAA"],
+  "key": {
+    "#": {
+      "tag": "minecraft:wool"
+    },
+    "O": {
+      "tag": "minecraft:fences"
+    },
+    "A": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "dailyshop:daily_shop",
+    "count": 1
+  }
+}

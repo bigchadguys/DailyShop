@@ -60,22 +60,22 @@ public abstract class ModPacket<T extends PacketListener> implements Packet<T>, 
         });
     }
 
-    @Environment(EnvType.SERVER)
-    public ThreadExecutor<?> getServerEngine(T listener) {
-        if(listener instanceof ServerPlayNetworkHandler handler) {
-            return handler.player.getServer();
-        }
-
-        DailyShopMod.LOGGER.error("Failed to handle packet {}, engine {} is unknown", this, listener);
-        return null;
-    }
-
     @Environment(EnvType.CLIENT)
     public ThreadExecutor<?> getClientEngine(T listener) {
         if(listener instanceof ServerPlayNetworkHandler handler) {
             return handler.player.getServer();
         } else if(listener instanceof ClientPlayNetworkHandler) {
             return MinecraftClient.getInstance();
+        }
+
+        DailyShopMod.LOGGER.error("Failed to handle packet {}, engine {} is unknown", this, listener);
+        return null;
+    }
+
+    @Environment(EnvType.SERVER)
+    public ThreadExecutor<?> getServerEngine(T listener) {
+        if(listener instanceof ServerPlayNetworkHandler handler) {
+            return handler.player.getServer();
         }
 
         DailyShopMod.LOGGER.error("Failed to handle packet {}, engine {} is unknown", this, listener);
