@@ -1,8 +1,10 @@
 package bigchadguys.dailyshop.data.item;
 
+import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -62,6 +64,22 @@ public class PartialItemTag implements ItemPlacement<PartialItemTag> {
         return this.nbt.isSubsetOf(nbt)
             && item.asWhole().map(other -> Registries.ITEM.getEntry(other).streamTags()
             .anyMatch(tag -> tag.id().equals(this.id))).orElse(false);
+    }
+
+    @Override
+    public void validate(String path) {
+        boolean used = false;
+
+        for(Item item : Registries.ITEM) {
+            if(Registries.ITEM.getEntry(item).streamTags().anyMatch(key -> this.getId().equals(key.id()))) {
+                used = true;
+                break;
+            }
+        }
+
+        if(!used) {
+            DailyShopMod.LOGGER.error("%s: Unused item tag <%s>".formatted(path, this.id));
+        }
     }
 
     @Override

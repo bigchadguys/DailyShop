@@ -24,6 +24,10 @@ public interface ItemPredicate {
 
 	boolean test(PartialItem item, PartialCompoundNbt nbt);
 
+	default void validate(String path) {
+
+	}
+
 	default boolean test(PartialStack stack) {
 		return this.test(stack.getItem(), stack.getNbt());
 	}

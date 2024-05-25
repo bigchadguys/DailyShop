@@ -21,6 +21,10 @@ public class ItemGroupsConfig extends FileConfig {
         return "item_groups";
     }
 
+    public boolean hasGroup(Identifier groupId) {
+        return this.groups.containsKey(groupId);
+    }
+
     public Set<ItemPredicate> getGroup(Identifier groupId) {
         return this.groups.getOrDefault(groupId, new HashSet<>());
     }

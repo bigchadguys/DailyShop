@@ -1,6 +1,7 @@
 package bigchadguys.dailyshop.config;
 
 import bigchadguys.dailyshop.data.item.PartialItem;
+import bigchadguys.dailyshop.init.ModConfigs;
 import bigchadguys.dailyshop.trade.DirectTradeEntry;
 import bigchadguys.dailyshop.trade.PoolTradeEntry;
 import bigchadguys.dailyshop.trade.ReferenceTradeEntry;
@@ -15,6 +16,12 @@ public class TradeTablesConfig extends RegistryConfig<TableTradeEntry> {
     @Override
     public String getFolder() {
         return "trade_tables";
+    }
+
+    public void validate(String path) {
+        this.getAll().forEach((key, entry) -> {
+            entry.validate(path + "." + key);
+        });
     }
 
     @Override
@@ -100,6 +107,13 @@ public class TradeTablesConfig extends RegistryConfig<TableTradeEntry> {
                     .add(new ReferenceTradeEntry("seeds"), 1)
                     .add(new ReferenceTradeEntry("spawn_eggs"), 1)
         ));
+    }
+
+    @Override
+    public <C extends Config> C read() {
+        C config = super.read();
+        ModConfigs.POST_LOAD.add(() -> ((TradeTablesConfig)config).validate(this.getFolder()));
+        return config;
     }
 
 }

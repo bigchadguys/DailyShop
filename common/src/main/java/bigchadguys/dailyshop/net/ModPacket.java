@@ -4,7 +4,6 @@ import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.bit.ArrayBitBuffer;
 import bigchadguys.dailyshop.data.serializable.IBitSerializable;
 import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

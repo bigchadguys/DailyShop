@@ -1,5 +1,6 @@
 package bigchadguys.dailyshop.data.item;
 
+import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
 import bigchadguys.dailyshop.init.ModConfigs;
 import com.mojang.brigadier.StringReader;
@@ -61,6 +62,13 @@ public class PartialItemGroup implements ItemPlacement<PartialItemGroup> {
     public boolean test(PartialItem item, PartialCompoundNbt nbt) {
         return this.nbt.isSubsetOf(nbt)
             && ModConfigs.ITEM_GROUPS.isInGroup(this.id, item, nbt);
+    }
+
+    @Override
+    public void validate(String path) {
+        if(!ModConfigs.ITEM_GROUPS.hasGroup(this.id)) {
+            DailyShopMod.LOGGER.error("%s: Unregistered item group <%s>".formatted(path, this.id));
+        }
     }
 
     @Override

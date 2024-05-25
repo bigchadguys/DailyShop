@@ -43,6 +43,11 @@ public class TableTradeEntry extends TradeEntry {
     }
 
     @Override
+    public void validate(String path) {
+        this.pool.validate(path);
+    }
+
+    @Override
     public Optional<JsonElement> writeJson() {
         return Adapters.TRADE.writeJson(this.pool).map(json -> {
             if(json instanceof JsonObject object) {

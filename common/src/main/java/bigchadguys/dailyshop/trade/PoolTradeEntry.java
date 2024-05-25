@@ -5,6 +5,8 @@ import bigchadguys.dailyshop.util.WeightedList;
 import bigchadguys.dailyshop.world.random.RandomSource;
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -24,6 +26,15 @@ public class PoolTradeEntry extends TradeEntry {
     @Override
     public Stream<Trade> generate(RandomSource random) {
         return this.entries.getRandom(random).map(entry -> entry.generate(random)).orElse(Stream.empty());
+    }
+
+    @Override
+    public void validate(String path) {
+        List<TradeEntry> entries = new ArrayList<>(this.entries.keySet());
+
+        for(int i = 0; i < entries.size(); i++) {
+           entries.get(i).validate("%s[%d]".formatted(path, i));
+        }
     }
 
     @Override

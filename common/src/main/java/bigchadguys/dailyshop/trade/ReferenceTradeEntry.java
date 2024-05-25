@@ -1,5 +1,6 @@
 package bigchadguys.dailyshop.trade;
 
+import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.init.ModConfigs;
 import bigchadguys.dailyshop.world.random.RandomSource;
@@ -24,6 +25,13 @@ public class ReferenceTradeEntry extends TradeEntry {
     @Override
     public Stream<Trade> generate(RandomSource random) {
         return ModConfigs.TRADE_TABLES.get(this.id).map(table -> table.generate(random)).orElse(Stream.empty());
+    }
+
+    @Override
+    public void validate(String path) {
+        if(ModConfigs.TRADE_TABLES.get(this.id).isEmpty()) {
+            DailyShopMod.LOGGER.error("%s: Unregistered trade table <%s>".formatted(path, this.id));
+        }
     }
 
     @Override

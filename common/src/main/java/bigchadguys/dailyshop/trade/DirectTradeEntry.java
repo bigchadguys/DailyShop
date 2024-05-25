@@ -1,5 +1,6 @@
 package bigchadguys.dailyshop.trade;
 
+import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.data.item.ItemPredicate;
 import bigchadguys.dailyshop.data.serializable.IJsonSerializable;
@@ -15,7 +16,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 public class DirectTradeEntry extends TradeEntry {
@@ -36,6 +41,22 @@ public class DirectTradeEntry extends TradeEntry {
     public DirectTradeEntry(IntRoll trades) {
         this();
         this.trades = trades;
+    }
+
+    @Override
+    public void validate(String path) {
+        this.validateList(this.input1, (input, i) -> input.validate("%s.input1[%d]".formatted(path, i)));
+        this.validateList(this.input2, (input, i) -> input.validate("%s.input2[%d]".formatted(path, i)));
+        this.validateList(this.input3, (input, i) -> input.validate("%s.input3[%d]".formatted(path, i)));
+        this.validateList(this.output, (output, i) -> output.validate("%s.output[%d]".formatted(path, i)));
+    }
+
+    private <T> void validateList(WeightedList<T> list, BiConsumer<T, Integer> action) {
+        List<Map.Entry<T, Double>> entries = new ArrayList<>(list.entrySet());
+
+        for(int i = 0; i < entries.size(); i++) {
+           action.accept(entries.get(i).getKey(), i);
+        }
     }
 
     public DirectTradeEntry addInput(int index, ItemPredicate filter, IntRoll count, double weight) {
@@ -112,6 +133,10 @@ public class DirectTradeEntry extends TradeEntry {
             return new Trade.Input(this.filter, this.count.get(random));
         }
 
+        public void validate(String path) {
+            this.filter.validate(path);
+        }
+
         @Override
         public Optional<JsonObject> writeJson() {
             JsonObject json = new JsonObject();
@@ -155,6 +180,12 @@ public class DirectTradeEntry extends TradeEntry {
             }
 
             return stack;
+        }
+
+        public void validate(String path) {
+            if(Registries.ITEM.getOrEmpty(this.item).isEmpty()) {
+                DailyShopMod.LOGGER.error("%s: Unregistered item <%s>".formatted(path, this.item));
+            }
         }
 
         @Override

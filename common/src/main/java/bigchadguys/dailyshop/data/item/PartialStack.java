@@ -80,6 +80,12 @@ public class PartialStack implements ItemPlacement<PartialStack> {
     }
 
     @Override
+    public void validate(String path) {
+        this.item.validate(path);
+        this.nbt.validate(path);
+    }
+
+    @Override
     public PartialStack copy() {
         return new PartialStack(this.item.copy(), this.nbt.copy());
     }

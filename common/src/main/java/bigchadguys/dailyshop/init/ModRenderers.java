@@ -2,9 +2,7 @@ package bigchadguys.dailyshop.init;
 
 import bigchadguys.dailyshop.block.entity.DailyShopBlockEntity;
 import bigchadguys.dailyshop.block.entity.renderer.DailyShopBlockEntityRenderer;
-import bigchadguys.dailyshop.screen.DailyShopScreen;
 import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;

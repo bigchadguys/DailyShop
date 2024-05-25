@@ -24,6 +24,10 @@ public abstract class RegistryConfig<T> extends Config {
 
     public abstract void process(String id, T value);
 
+    public Map<String, T> getAll() {
+        return this.idToValue;
+    }
+
     public void put(String path, T value) {
         this.pathToValue.put(Paths.get(path.replace("/", File.separator) + ".json"), value);
         this.idToValue.put(path, value);

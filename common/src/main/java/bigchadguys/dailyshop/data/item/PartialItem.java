@@ -1,5 +1,6 @@
 package bigchadguys.dailyshop.data.item;
 
+import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.data.adapter.ISimpleAdapter;
 import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
@@ -64,6 +65,13 @@ public class PartialItem implements ItemPlacement<PartialItem> {
     @Override
     public boolean test(PartialItem item, PartialCompoundNbt nbt) {
         return this.isSubsetOf(item);
+    }
+
+    @Override
+    public void validate(String path) {
+        if(this.asWhole().isEmpty()) {
+            DailyShopMod.LOGGER.error("%s: Unregistered item <%s>".formatted(path, this.id));
+        }
     }
 
     public Optional<Item> asWhole() {

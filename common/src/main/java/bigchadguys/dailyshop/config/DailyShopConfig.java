@@ -1,5 +1,6 @@
 package bigchadguys.dailyshop.config;
 
+import bigchadguys.dailyshop.init.ModConfigs;
 import bigchadguys.dailyshop.trade.ArrayShop;
 import bigchadguys.dailyshop.trade.ReferenceTradeEntry;
 import bigchadguys.dailyshop.trade.Shop;
@@ -23,6 +24,10 @@ public class DailyShopConfig extends FileConfig {
         return new ArrayShop(this.trades.generate(random).toList());
     }
 
+    public void validate(String path) {
+        this.trades.validate(path + ".trades");
+    }
+
     @Override
     public String getPath() {
         return "daily_shop";
@@ -33,6 +38,13 @@ public class DailyShopConfig extends FileConfig {
         this.startEpoch = 0;
         this.refreshDelay = 60 * 1000;
         this.trades = new ReferenceTradeEntry("daily_shop");
+    }
+
+    @Override
+    public <T extends Config> T read() {
+        T config = super.read();
+        ModConfigs.POST_LOAD.add(() -> ((DailyShopConfig)config).validate(this.getPath()));
+        return config;
     }
 
 }

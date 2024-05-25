@@ -30,6 +30,13 @@ public class OrItemPredicate implements ItemPredicate {
     }
 
     @Override
+    public void validate(String path) {
+        for(int i = 0; i < this.children.length; i++) {
+           this.children[i].validate(path + "[" + i + "]");
+        }
+    }
+
+    @Override
     public String toString() {
         return Arrays.toString(this.children);
     }

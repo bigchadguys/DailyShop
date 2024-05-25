@@ -23,6 +23,8 @@ public abstract class TradeEntry implements ISerializable<NbtElement, JsonElemen
 
     }
 
+    public abstract void validate(String path);
+
     public static class Adapter implements ISimpleAdapter<TradeEntry, NbtElement, JsonElement> {
         @Override
         public Optional<JsonElement> writeJson(TradeEntry value) {
