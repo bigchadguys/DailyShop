@@ -33,7 +33,7 @@ public class ReloadCommand extends Command {
 
     private int onReload(CommandContext<ServerCommandSource> context) {
         try {
-            ModConfigs.register();
+            ModConfigs.register(false);
             context.getSource().sendFeedback(() -> Text.literal("Reloaded configs successfully.").formatted(Formatting.GRAY), true);
         } catch(Exception e) {
             context.getSource().sendFeedback(() -> Text.literal("Failed to reload configs.").formatted(Formatting.GRAY), true);
