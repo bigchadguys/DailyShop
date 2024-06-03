@@ -38,7 +38,7 @@ public class ModRegistries {
         }
 
         ModWorldData.register();
-        ModConfigs.register();
+        ModConfigs.register(true);
     }
 
     public static <T, V extends T> RegistrySupplier<V> register(DeferredRegister<T> registry, Identifier id, Supplier<V> value) {

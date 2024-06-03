@@ -18,6 +18,7 @@ public class ReloadCommand extends Command {
     @Override
     public void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess access, CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(literal(DailyShopMod.ID)
+                .requires(source -> source.hasPermissionLevel(4))
                 .then(literal("reload")
                     .executes(this::onReload))
                 .then(literal("refresh")
