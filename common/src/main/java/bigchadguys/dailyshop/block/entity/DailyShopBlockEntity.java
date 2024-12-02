@@ -1,8 +1,10 @@
 package bigchadguys.dailyshop.block.entity;
 
+import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.init.ModBlocks;
 import bigchadguys.dailyshop.init.ModWorldData;
 import bigchadguys.dailyshop.screen.handler.DailyShopScreenHandler;
+import bigchadguys.dailyshop.trade.EmptyShop;
 import bigchadguys.dailyshop.trade.Shop;
 import bigchadguys.dailyshop.world.data.DailyShopData;
 import dev.architectury.registry.menu.ExtendedMenuProvider;
@@ -33,9 +35,8 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
 
     public static final int[] AVAILABLE_SLOTS = IntStream.range(0, 27).toArray();
 
+    private String id;
     private final DefaultedList<ItemStack> inventory;
-    private long lastUpdated;
-    private boolean refreshed;
 
     public DailyShopBlockEntity(BlockPos pos, BlockState state) {
         this(ModBlocks.Entities.DAILY_SHOP.get(), pos, state);
@@ -44,40 +45,23 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
     public DailyShopBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
-        this.refreshed = false;
     }
 
-    public long getLastUpdated() {
-        return this.lastUpdated;
+    public String getId() {
+        return this.id;
     }
 
-    public boolean isRefreshed() {
-        return this.refreshed;
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
-        this.sendUpdatesToClient();
-    }
-
-    private void setRefreshed(boolean refreshed) {
-        this.refreshed = refreshed;
-        this.sendUpdatesToClient();
+    public void setId(String id) {
+        this.id = id;
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, DailyShopBlockEntity entity) {
-        if(world instanceof ServerWorld) {
-            DailyShopData data = ModWorldData.DAILY_SHOP.getGlobal(world);
 
-            if(data.getLastUpdated() != entity.lastUpdated) {
-                entity.setLastUpdated(data.getLastUpdated());
-                entity.setRefreshed(true);
-            }
-        }
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, UpdateType type) {
+        Adapters.UTF_8.writeNbt(this.id).ifPresent(tag -> nbt.put("shop", tag));
         NbtList inventory = new NbtList();
 
         for(int slotIndex = 0; slotIndex < this.inventory.size(); slotIndex++) {
@@ -92,14 +76,11 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
         if(!inventory.isEmpty()) {
             nbt.put("inventory", inventory);
         }
-
-        if(this.refreshed) {
-            nbt.putBoolean("refreshed", true);
-        }
     }
 
     @Override
     public void readNbt(NbtCompound nbt, UpdateType type) {
+        this.id = Adapters.UTF_8.readNbt(nbt.get("shop")).orElse(null);
         this.inventory.clear();
         NbtList inventory = nbt.getList("inventory", NbtElement.COMPOUND_TYPE);
 
@@ -109,8 +90,6 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
             if(slotIndex >= this.inventory.size()) continue;
             this.inventory.set(i, ItemStack.fromNbt(entry));
         }
-
-        this.refreshed = nbt.getBoolean("refreshed");
     }
 
     @Override
@@ -187,18 +166,23 @@ public class DailyShopBlockEntity extends BaseBlockEntity implements SidedInvent
 
     @Override
     public void onOpen(PlayerEntity player) {
-        this.setRefreshed(false);
+        DailyShopData data = ModWorldData.DAILY_SHOP.getGlobal(player.getWorld());
+        data.onAcknowledge(this.id, player);
     }
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        Shop shop = ModWorldData.DAILY_SHOP.getGlobal(player.getWorld()).getShop();
-        return new DailyShopScreenHandler(syncId, playerInventory, this, shop);
+        Shop shop = ModWorldData.DAILY_SHOP.getGlobal(player.getWorld()).getShop(this.id).orElse(EmptyShop.INSTANCE);
+        return new DailyShopScreenHandler(syncId, playerInventory, this, this.id, shop);
     }
 
     @Override
-    public void saveExtraData(PacketByteBuf buf) {
+    public void saveExtraData(PacketByteBuf buffer) {
+        buffer.writeBoolean(this.id != null);
 
+        if(this.id != null) {
+            buffer.writeString(this.id);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package bigchadguys.dailyshop.init;
 
 import bigchadguys.dailyshop.block.DailyShopBlock;
 import bigchadguys.dailyshop.block.entity.DailyShopBlockEntity;
+import bigchadguys.dailyshop.item.DailyShopItem;
 import com.mojang.datafixers.types.Type;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.block.Block;
@@ -28,7 +29,7 @@ public class ModBlocks extends ModRegistries {
             block -> new BlockItem(block.get(), new Item.Settings()));
 
         DAILY_SHOP = register("daily_shop", () -> new DailyShopBlock(Block.Settings.copy(Blocks.OAK_WOOD).nonOpaque()),
-            block -> new BlockItem(block.get(), new Item.Settings()));
+            block -> new DailyShopItem(block.get()));
     }
 
     public static class Entities extends ModBlocks {

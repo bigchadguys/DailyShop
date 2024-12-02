@@ -18,6 +18,7 @@ import bigchadguys.dailyshop.data.nbt.PartialCompoundNbt;
 import bigchadguys.dailyshop.data.tile.*;
 import bigchadguys.dailyshop.trade.Shop;
 import bigchadguys.dailyshop.trade.TradeEntry;
+import bigchadguys.dailyshop.world.data.DailyShopData;
 import bigchadguys.dailyshop.world.random.ChunkRandom;
 import bigchadguys.dailyshop.world.random.JavaRandom;
 import bigchadguys.dailyshop.world.random.LcgRandom;
@@ -122,6 +123,7 @@ public class Adapters {
     public static final BlockPosAdapter BLOCK_POS = new BlockPosAdapter(false);
     public static final Shop.Adapter SHOP = new Shop.Adapter();
     public static final TradeEntry.Adapter TRADE = new TradeEntry.Adapter();
+    public static final SerializableAdapter<DailyShopData.Entry, ?, ?> SHOP_ENTRY = Adapters.of(DailyShopData.Entry::new, true);
 
     public static Lcg.Adapter LCG = new Lcg.Adapter(false);
 

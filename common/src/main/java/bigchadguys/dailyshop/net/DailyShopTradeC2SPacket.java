@@ -5,6 +5,7 @@ import bigchadguys.dailyshop.data.adapter.Adapters;
 import bigchadguys.dailyshop.data.bit.BitBuffer;
 import bigchadguys.dailyshop.init.ModWorldData;
 import bigchadguys.dailyshop.screen.handler.DailyShopScreenHandler;
+import bigchadguys.dailyshop.trade.Shop;
 import bigchadguys.dailyshop.trade.Trade;
 import bigchadguys.dailyshop.util.TradeExecutor;
 import bigchadguys.dailyshop.world.data.DailyShopData;
@@ -43,21 +44,23 @@ public class DailyShopTradeC2SPacket extends ModPacket<ServerPlayNetworkHandler>
         ServerPlayerEntity player = listener.getPlayer();
         ScreenHandler handler = player.currentScreenHandler;
 
-        if(handler instanceof DailyShopScreenHandler shop) {
-            if(!shop.canUse(player)) {
-                DailyShopMod.LOGGER.debug("Player {} interacted with invalid menu {}", player, shop);
+        if(handler instanceof DailyShopScreenHandler shopHandler) {
+            if(!shopHandler.canUse(player)) {
+                DailyShopMod.LOGGER.debug("Player {} interacted with invalid menu {}", player, shopHandler);
                 return;
             }
 
             DailyShopData data = ModWorldData.DAILY_SHOP.getGlobal(player.getWorld());
-            List<Trade> trades = data.getShop().getTrades().toList();
+            Shop shop = data.getShop(shopHandler.getId()).orElse(null);
+            if(shop == null) return;
+            List<Trade> trades = shop.getTrades().toList();
             if(this.index < 0 || this.index >= trades.size()) return;
             Trade trade = trades.get(this.index);
 
-            if(TradeExecutor.test(trade, shop).canTrade()) {
-                TradeExecutor.execute(trade, shop);
+            if(TradeExecutor.test(trade, shopHandler).canTrade()) {
+                TradeExecutor.execute(trade, shopHandler);
                 trade.onTrade(1);
-                data.onChanged(player.getServer());
+                shop.onChanged();
 
                 player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 2.0F);

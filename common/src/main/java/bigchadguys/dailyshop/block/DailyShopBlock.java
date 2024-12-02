@@ -2,6 +2,7 @@ package bigchadguys.dailyshop.block;
 
 import bigchadguys.dailyshop.block.entity.DailyShopBlockEntity;
 import bigchadguys.dailyshop.init.ModBlocks;
+import bigchadguys.dailyshop.item.DailyShopItem;
 import dev.architectury.registry.menu.ExtendedMenuProvider;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.block.*;
@@ -11,6 +12,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SidedInventory;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
@@ -60,6 +62,17 @@ public class DailyShopBlock extends BlockWithEntity implements InventoryProvider
     }
 
     @Override
+    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+        ItemStack stack = super.getPickStack(world, pos, state);
+
+        if(world.getBlockEntity(pos) instanceof DailyShopBlockEntity entity) {
+            DailyShopItem.setId(stack, entity.getId());
+        }
+
+        return stack;
+    }
+
+    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(FACING);
@@ -106,10 +119,10 @@ public class DailyShopBlock extends BlockWithEntity implements InventoryProvider
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         if(!world.isClient && world.getBlockEntity(pos) instanceof DailyShopBlockEntity shop) {
-            if(player.isCreative() && !shop.isEmpty()) {
-                ItemStack stack = new ItemStack(ModBlocks.DAILY_SHOP.get());
-                shop.setStackNbt(stack);
+            ItemStack stack = DailyShopItem.create(shop.getId());
+            shop.setStackNbt(stack);
 
+            if(player.isCreative() && BlockItem.getBlockEntityNbt(stack) != null) {
                 ItemEntity item = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
                 item.setToDefaultPickupDelay();
                 world.spawnEntity(item);
@@ -122,13 +135,13 @@ public class DailyShopBlock extends BlockWithEntity implements InventoryProvider
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         List<ItemStack> drops = super.getDroppedStacks(state, builder);
+        ItemStack stack = DailyShopItem.create(null);
 
         if(builder.getOptional(LootContextParameters.BLOCK_ENTITY) instanceof DailyShopBlockEntity shop) {
-            ItemStack stack = new ItemStack(ModBlocks.DAILY_SHOP.get());
             shop.setStackNbt(stack);
-            drops.add(stack);
         }
 
+        drops.add(stack);
         return drops;
     }
 

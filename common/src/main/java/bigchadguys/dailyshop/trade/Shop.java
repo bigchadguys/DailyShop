@@ -29,7 +29,7 @@ public abstract class Shop implements ISerializable<NbtCompound, JsonObject> {
         this.changeListeners.remove(reference);
     }
 
-    protected final void onChanged() {
+    public final void onChanged() {
         this.changeListeners.values().forEach(Runnable::run);
     }
 

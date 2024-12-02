@@ -4,6 +4,7 @@ import bigchadguys.dailyshop.DailyShopMod;
 import bigchadguys.dailyshop.init.ModNetwork;
 import bigchadguys.dailyshop.net.DailyShopTradeC2SPacket;
 import bigchadguys.dailyshop.screen.handler.DailyShopScreenHandler;
+import bigchadguys.dailyshop.trade.EmptyShop;
 import bigchadguys.dailyshop.trade.Trade;
 import bigchadguys.dailyshop.util.ClientScheduler;
 import bigchadguys.dailyshop.util.TradeExecutor;
@@ -48,7 +49,7 @@ public class DailyShopScreen extends HandledScreen<DailyShopScreenHandler> {
     }
 
     public List<Trade> getTrades() {
-        return DailyShopData.CLIENT.getShop().getTrades().toList();
+        return DailyShopData.CLIENT.getShop(this.handler.getId()).orElse(EmptyShop.INSTANCE).getTrades().toList();
     }
 
     public TradeExecutor.Result getResult(int index) {
@@ -86,7 +87,6 @@ public class DailyShopScreen extends HandledScreen<DailyShopScreenHandler> {
         int l = this.textRenderer.getWidth(TRADES_TEXT);
         context.drawText(this.textRenderer, TRADES_TEXT, 5 - l / 2 + 48, 6, 0x404040, false);
     }
-
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {

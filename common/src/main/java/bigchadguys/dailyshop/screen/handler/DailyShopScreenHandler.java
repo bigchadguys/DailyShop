@@ -1,6 +1,7 @@
 package bigchadguys.dailyshop.screen.handler;
 
 import bigchadguys.dailyshop.init.ModScreenHandlers;
+import bigchadguys.dailyshop.trade.EmptyShop;
 import bigchadguys.dailyshop.trade.Shop;
 import bigchadguys.dailyshop.world.data.DailyShopData;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,15 +15,21 @@ import net.minecraft.screen.slot.Slot;
 
 public class DailyShopScreenHandler extends ScreenHandler {
 
+    private final String id;
     private final Shop shop;
     private final Inventory shopInventory;
 
     public DailyShopScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buffer) {
-        this(syncId, playerInventory, new SimpleInventory(27), DailyShopData.CLIENT.getShop());
+        this(syncId, playerInventory, new SimpleInventory(27), buffer.readBoolean() ? buffer.readString() : null);
     }
 
-    public DailyShopScreenHandler(int syncId, PlayerInventory playerInventory, Inventory shopInventory, Shop shop) {
+    public DailyShopScreenHandler(int syncId, PlayerInventory playerInventory, Inventory shopInventory, String id) {
+        this(syncId, playerInventory, shopInventory, id, DailyShopData.CLIENT.getShop(id).orElse(EmptyShop.INSTANCE));
+    }
+
+    public DailyShopScreenHandler(int syncId, PlayerInventory playerInventory, Inventory shopInventory, String id, Shop shop) {
         super(ModScreenHandlers.DAILY_SHOP.get(), syncId);
+        this.id = id;
         this.shop = shop;
         ScreenHandler.checkSize(shopInventory, 27);
         this.shopInventory = shopInventory;
@@ -44,6 +51,10 @@ public class DailyShopScreenHandler extends ScreenHandler {
         }
 
         this.shopInventory.onOpen(playerInventory.player);
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     @Override

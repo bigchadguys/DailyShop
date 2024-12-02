@@ -3,6 +3,9 @@ package bigchadguys.dailyshop.block.entity.renderer;
 import bigchadguys.dailyshop.block.entity.DailyShopBlockEntity;
 import bigchadguys.dailyshop.model.ExclamationPointModel;
 import bigchadguys.dailyshop.util.ClientScheduler;
+import bigchadguys.dailyshop.world.data.DailyShopData;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -21,7 +24,10 @@ public class DailyShopBlockEntityRenderer implements BlockEntityRenderer<DailySh
 
     @Override
     public void render(DailyShopBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if(entity.isRefreshed()) {
+        DailyShopData.Entry entry = DailyShopData.CLIENT.getEntries().get(entity.getId());
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+
+        if(entry != null && player != null && !entry.getAcknowledgments().contains(player.getUuid())) {
             matrices.push();
             matrices.translate(0.5F, 0.5F + Math.sin(ClientScheduler.getTick(tickDelta) / 10.0F) / 20.0F, 0.5F);
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180.0F));
